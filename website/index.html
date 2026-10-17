@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>OKAWARI Tools</title>
-  <meta name="description" content="Windows向け無料ツールの配布サイト。第1弾は、マウスだけで画面をコピーするQuickShotです。">
+  <meta name="description" content="1つの面倒を、1クリックで解決する。Windows向け無料ツール OKAWARI Tools。">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -18,31 +18,62 @@
   </header>
   <main id="main" class="wrap">
     <section class="hero">
-      <h1 data-i18n="hero_title">面倒な操作を、もっと簡単に。</h1>
+      <p class="kicker">OKAWARI Tools</p>
+      <h1 data-i18n="hero_title">1つの面倒を、1クリックで解決する</h1>
       <p class="lead" data-i18n="hero_lead">Windows向けの無料ツールです。登録なしで使えます。</p>
     </section>
+    <section class="section panel">
+      <p><span class="badge" data-i18n="status_live">公開中</span></p>
+      <h2>QuickShot</h2>
+      <p data-i18n="card_summary">マウスで範囲を選ぶと、画像がクリップボードにコピーされます。</p>
+      <ul class="feature-list">
+        <li data-i18n="f1">マウスで範囲を選ぶだけです。</li>
+        <li data-i18n="f2">撮影後、画像は自動でクリップボードにコピーされます。</li>
+        <li data-i18n="f3">保存画面も編集画面も開きません。</li>
+        <li data-i18n="f4">撮影にキーボードショートカットは不要です。中止するときは Esc を押せます。</li>
+        <li data-i18n="f5">無料で、会員登録は不要です。</li>
+        <li data-i18n="f6">Windows 10 / 11 の64ビットに対応しています。</li>
+      </ul>
+      <h3 data-i18n="howto_heading">使い方</h3>
+      <ol class="steps">
+        <li class="step"><strong>1</strong><span data-i18n="s1">QuickShotを起動します。</span></li>
+        <li class="step"><strong>2</strong><span data-i18n="s2">マウスで撮影範囲を選びます。カメラボタンをクリックし、ドラッグして離すとコピーされます。</span></li>
+        <li class="step"><strong>3</strong><span data-i18n="s3">コピーされた画像を、貼り付け先で Ctrl+V します。</span></li>
+      </ol>
+      <!-- Real screenshot only. Do not place a mock image here. -->
+      <figure class="shot-slot">
+        <figcaption data-i18n="shot_note">アプリの画面は、実物の画像ができてからここに掲載します。</figcaption>
+      </figure>
+      <p><a class="btn btn-primary" href="quickshot.html" data-i18n="card_link">無料でダウンロード</a></p>
+    </section>
     <section class="section">
-      <h2 data-i18n="tools_heading">無料ツール</h2>
+      <h2 data-i18n="tools_heading">ツール</h2>
       <div class="tool-list">
         <article class="tool-card">
+          <p><span class="badge" data-i18n="status_live">公開中</span></p>
           <h3>QuickShot</h3>
-          <p data-i18n="card_summary">マウスだけで、画面の一部を画像としてコピーします。</p>
-          <ul>
-            <li data-i18n="card_b1">範囲をドラッグして離すと、クリップボードに入ります。</li>
-            <li data-i18n="card_b2">会員登録も、撮影ごとの広告もありません。</li>
-            <li data-i18n="card_b3">画像を外部へ送信しません。</li>
-          </ul>
-          <a class="btn btn-secondary" href="quickshot.html" data-i18n="card_link">QuickShotの詳細とダウンロード</a>
+          <p data-i18n="card_summary">マウスで範囲を選ぶと、画像がクリップボードにコピーされます。</p>
+          <a class="btn btn-secondary" href="quickshot.html" data-i18n="card_link">無料でダウンロード</a>
+        </article>
+        <article class="tool-card">
+          <p><span class="badge badge-muted" data-i18n="planned">開発予定</span></p>
+          <h3>QuickResize</h3>
+          <p data-i18n="planned_note">まだ公開していません。ダウンロードはできません。</p>
+        </article>
+        <article class="tool-card">
+          <p><span class="badge badge-muted" data-i18n="planned">開発予定</span></p>
+          <h3>QuickConvert</h3>
+          <p data-i18n="planned_note">まだ公開していません。ダウンロードはできません。</p>
         </article>
       </div>
     </section>
-    <!-- Future ad slot. Keep empty. Do not place a download inside it. -->
     <aside class="ad-slot" data-ad-slot="home-bottom"></aside>
   </main>
   <footer class="site-footer">
     <div class="footer-inner">
       <p class="copy">© 2026 OKAWARI Tools</p>
       <nav>
+        <a href="about.html" data-i18n="footer_about">運営者情報</a>
         <a href="privacy.html" data-i18n="footer_privacy">プライバシーポリシー</a>
         <a href="terms.html" data-i18n="footer_terms">利用規約</a>
       </nav>

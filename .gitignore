@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+quickshot/build/
+quickshot/dist/
+*.spec
+*.log
+*.exe
+
+# Release EXEs are published through GitHub Releases, not this repository.

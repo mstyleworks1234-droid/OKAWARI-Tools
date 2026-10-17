@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QuickShot - OKAWARI Tools</title>
+  <meta name="description" content="QuickShotは、マウスで選んだ範囲をクリップボードへコピーする無料のWindowsアプリです。">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-title="title_quickshot" data-meta="meta_quickshot">
+  <a class="skip" href="#main" data-i18n="skip">内容へスキップ</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="logo" href="index.html">OKAWARI <span>Tools</span></a>
+      <button type="button" id="lang-toggle" class="lang-toggle">English</button>
+    </div>
+  </header>
+  <main id="main" class="wrap">
+    <section class="hero">
+      <h1>QuickShot</h1>
+      <p class="badges">
+        <span class="badge" data-i18n="badge_free">無料</span>
+        <span class="badge" data-i18n="badge_win">Windows</span>
+      </p>
+      <p class="lead" data-i18n="qs_lead">画面の範囲をマウスで選ぶと、その画像をクリップボードへコピーします。保存や編集の画面は出ません。</p>
+    </section>
+    <section class="section panel" id="download-box">
+      <p>
+        <a id="download" class="btn btn-primary disabled" role="button" aria-disabled="true">ダウンロードはまだ利用できません</a>
+      </p>
+      <p id="download-note" class="note">配布用EXEがまだ無いため、ダウンロードは無効です。</p>
+      <dl class="spec">
+        <dt data-i18n="version_label">アプリのバージョン</dt>
+        <dd id="file-version">1.0.1</dd>
+        <dt data-i18n="file_label">ファイル名</dt>
+        <dd id="file-name">—</dd>
+        <dt data-i18n="size_label">ファイルサイズ</dt>
+        <dd id="file-size">未計測</dd>
+        <dt data-i18n="hash_label">SHA-256</dt>
+        <dd id="file-hash" class="hash">未計測</dd>
+      </dl>
+    </section>
+    <section class="section">
+      <h2 data-i18n="features_heading">主な特徴</h2>
+      <ul class="plain">
+        <li data-i18n="f1">マウス操作だけで範囲を撮影し、画像としてコピーします。</li>
+        <li data-i18n="f2">撮影後は自動で元の画面に戻ります。編集画面はありません。</li>
+        <li data-i18n="f3">Escキーで範囲選択をキャンセルできます。</li>
+        <li data-i18n="f4">複数モニターと、表示の拡大率に対応します。</li>
+        <li data-i18n="f5">常駐ボタンはドラッグで移動でき、位置を保存します。</li>
+        <li data-i18n="f6">右クリックで終了します。撮影の瞬間はボタンを隠します。</li>
+      </ul>
+    </section>
+    <section class="section">
+      <h2 data-i18n="howto_heading">使い方</h2>
+      <ol class="plain">
+        <li data-i18n="s1">QuickShotを起動します。</li>
+        <li data-i18n="s2">画面端のカメラボタンをクリックします。</li>
+        <li data-i18n="s3">撮りたい範囲をマウスでドラッグします。</li>
+        <li data-i18n="s4">マウスを離すと、その範囲がコピーされます。</li>
+        <li data-i18n="s5">ChatGPT、LINE、Discordなどへ Ctrl+V で貼り付けます。</li>
+      </ol>
+    </section>
+    <section class="section">
+      <h2 data-i18n="spec_heading">仕様</h2>
+      <dl class="spec">
+        <dt data-i18n="spec_os_label">対応OS</dt>
+        <dd data-i18n="spec_os">Windows 10 / 11（64ビット）</dd>
+        <dt data-i18n="spec_arch_label">形式</dt>
+        <dd data-i18n="spec_arch">単体EXE（インストール不要）</dd>
+        <dt data-i18n="spec_price_label">料金</dt>
+        <dd data-i18n="spec_price">無料</dd>
+        <dt data-i18n="spec_net_label">通信</dt>
+        <dd data-i18n="spec_net">アプリは外部と通信しません</dd>
+        <dt data-i18n="spec_account_label">アカウント</dt>
+        <dd data-i18n="spec_account">不要</dd>
+        <dt data-i18n="spec_ads_label">広告</dt>
+        <dd data-i18n="spec_ads">アプリ内広告なし。撮影ごとの広告なし</dd>
+      </dl>
+    </section>
+    <section class="section">
+      <h2 data-i18n="install_heading">起動方法</h2>
+      <ol class="plain">
+        <li data-i18n="i1">ダウンロードしたEXEを、任意のフォルダに保存します。</li>
+        <li data-i18n="i2">EXEをダブルクリックして起動します。</li>
+        <li data-i18n="i3">「WindowsによってPCが保護されました」と出た場合は、「詳細情報」を開いて「実行」を選びます。この初期版はコード署名をしていないため、表示されることがあります。</li>
+        <li data-i18n="i4">管理者権限や、別のインストール作業は不要です。</li>
+      </ol>
+    </section>
+    <section class="section">
+      <h2 data-i18n="uninstall_heading">終了と削除</h2>
+      <ol class="plain">
+        <li data-i18n="u1">カメラボタンを右クリックし、「終了」を選びます。</li>
+        <li data-i18n="u2">保存したEXEを削除します。</li>
+        <li data-i18n="u3">ボタン位置などの設定も消すときは、%APPDATA%\OKAWARI\QuickShot フォルダを削除します。スタートアップやレジストリへの登録は行いません。</li>
+      </ol>
+    </section>
+    <section class="section">
+      <h2 data-i18n="security_heading">セキュリティ上の注意</h2>
+      <ul class="plain">
+        <li data-i18n="sec1">スクリーンショットはファイルに保存せず、パソコンのメモリとクリップボードだけで扱います。</li>
+        <li data-i18n="sec2">開発者のサーバーへ画像や利用状況を送りません。</li>
+        <li data-i18n="sec3">自動更新機能はありません。アプリが自分で別のプログラムを取りに行くことはありません。</li>
+        <li data-i18n="sec4">公開されているSHA-256と、手元のファイルの値が一致することを確認してください。</li>
+        <li data-i18n="sec5">入手元のわからないコピーは実行しないでください。</li>
+      </ul>
+    </section>
+    <section class="section">
+      <h2 data-i18n="faq_heading">よくある質問</h2>
+      <details>
+        <summary data-i18n="q1">画像はどこに保存されますか？</summary>
+        <p data-i18n="a1">ファイルには保存しません。クリップボードにだけ入ります。その後で別の内容をコピーすると、置き換わります。</p>
+      </details>
+      <details>
+        <summary data-i18n="q2">料金はかかりますか？</summary>
+        <p data-i18n="a2">QuickShotの利用に料金はありません。アカウントも不要です。アプリの中に広告は出ません。</p>
+      </details>
+      <details>
+        <summary data-i18n="q3">どのWindowsで使えますか？</summary>
+        <p data-i18n="a3">Windows 10およびWindows 11の64ビットを対象にしています。</p>
+      </details>
+      <details>
+        <summary data-i18n="q4">ボタンがスクリーンショットに写りますか？</summary>
+        <p data-i18n="a4">撮影の直前にボタンを隠し、コピーが終わってから戻します。</p>
+      </details>
+      <details>
+        <summary data-i18n="q5">どうやって終了しますか？</summary>
+        <p data-i18n="a5">カメラボタンを右クリックして「終了」を選びます。</p>
+      </details>
+      <details>
+        <summary data-i18n="q6">2回起動するとどうなりますか？</summary>
+        <p data-i18n="a6">2つ目は起動しません。すでに起動していることを知らせる画面を表示します。</p>
+      </details>
+      <details>
+        <summary data-i18n="q7">再起動したあとは自動で立ち上がりますか？</summary>
+        <p data-i18n="a7">自動起動はしません。使うときにEXEを開いてください。ボタンの位置はパソコン内に保存されています。</p>
+      </details>
+    </section>
+    <p class="section"><a href="index.html" data-i18n="back_home">ツール一覧へ</a></p>
+    <!-- Future ad slot. Keep empty and away from the download button. -->
+    <aside class="ad-slot" data-ad-slot="quickshot-bottom"></aside>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p class="copy">© 2026 OKAWARI Tools</p>
+      <nav>
+        <a href="privacy.html" data-i18n="footer_privacy">プライバシーポリシー</a>
+        <a href="terms.html" data-i18n="footer_terms">利用規約</a>
+      </nav>
+    </div>
+  </footer>
+  <script src="app.js"></script>
+</body>
+</html>

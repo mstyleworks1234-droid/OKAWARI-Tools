@@ -1,0 +1,3 @@
+# QuickShot itself uses the Python standard library only.
+# PyInstaller is a development tool for building the Windows EXE.
+pyinstaller>=6.0

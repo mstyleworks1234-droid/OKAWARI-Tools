@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>プライバシーポリシー - OKAWARI Tools</title>
+  <meta name="description" content="OKAWARI ToolsとQuickShotのプライバシーポリシー。現在の実装に基づきます。">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-title="title_privacy" data-meta="meta_privacy">
+  <a class="skip" href="#main" data-i18n="skip">内容へスキップ</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="logo" href="index.html">OKAWARI <span>Tools</span></a>
+      <button type="button" id="lang-toggle" class="lang-toggle">English</button>
+    </div>
+  </header>
+  <main id="main" class="wrap">
+    <h1 data-i18n="footer_privacy">プライバシーポリシー</h1>
+    <p class="note" data-i18n="privacy_updated">2026年10月17日 更新</p>
+    <p data-i18n="privacy_intro">このポリシーは、現在のOKAWARI Toolsウェブサイトと、QuickShot 1.0.1の実装について説明します。将来機能を変える場合は、このページを更新します。</p>
+    <section class="section">
+      <h2 data-i18n="privacy_h_site">ウェブサイト</h2>
+      <p data-i18n="privacy_site">このサイトは静的なHTMLです。会員登録、ログイン、アクセス解析、広告タグはありません。外部のフォントや外部スクリプトは読み込みません。表示言語の選択は、ブラウザの localStorage（キー名 okawari-lang）にだけ保存されます。この値を当方のサーバーへ送る機能はありません。</p>
+    </section>
+    <section class="section">
+      <h2 data-i18n="privacy_h_app">QuickShot</h2>
+      <p data-i18n="privacy_app">アカウント登録はありません。スクリーンショットはファイルとして保存せず、選択した範囲の画像をWindowsのクリップボードへコピーします。画像はアプリのメモリ上で処理し、開発者や外部のサーバーへは送信しません。常駐ボタンの位置と言語は、お使いのパソコンの %APPDATA%\OKAWARI\QuickShot\settings.json に保存します。アプリに自動更新はなく、起動後に外部と通信しません。</p>
+    </section>
+    <section class="section">
+      <h2 data-i18n="privacy_h_clip">クリップボード</h2>
+      <p data-i18n="privacy_clip">コピーされた画像は、Windowsの仕組みによって、利用者が貼り付け先に選んだアプリへ渡ります。QuickShotは貼り付け先を選ばず、画像の内容を記録しません。</p>
+    </section>
+    <section class="section">
+      <h2 data-i18n="privacy_h_ads">広告</h2>
+      <p data-i18n="privacy_ads">現在、ウェブサイトにもアプリにも広告は掲載していません。将来ウェブサイトに広告を載せる場合は、広告を見ないとダウンロードできない形にはせず、掲載前にこのポリシーへ事業者と取得される情報を追記します。</p>
+    </section>
+    <section class="section">
+      <h2 data-i18n="privacy_h_contact">連絡先</h2>
+      <p data-i18n="privacy_contact">公開用の連絡先は、まだ設定していません。</p>
+    </section>
+    <p class="section"><a href="index.html" data-i18n="back_home">ツール一覧へ</a></p>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p class="copy">© 2026 OKAWARI Tools</p>
+      <nav>
+        <a href="privacy.html" data-i18n="footer_privacy">プライバシーポリシー</a>
+        <a href="terms.html" data-i18n="footer_terms">利用規約</a>
+      </nav>
+    </div>
+  </footer>
+  <script src="app.js"></script>
+</body>
+</html>

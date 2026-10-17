@@ -229,10 +229,8 @@ const I18N = {
   }
 };
 
-// Paste the real GitHub Releases asset URL before Cloudflare publish.
-// Leave "" until that file exists. An empty href keeps the download disabled.
-// Local folder check only: "../releases/QuickShot-1.0.1-win64.exe"
-const GITHUB_RELEASE_URL = "";
+// QuickShot 1.0.1 asset on GitHub Releases.
+const GITHUB_RELEASE_URL = "https://github.com/mstyleworks1234-droid/OKAWARI-Tools/releases/download/quickshot-1.0.1/QuickShot-1.0.1-win64.exe";
 
 const RELEASE = {
   version: "1.0.1",

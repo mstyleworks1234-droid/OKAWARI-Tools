@@ -1,7 +1,7 @@
 @echo off
 setlocal EnableExtensions
 cd /d "%~dp0"
-set "VER=1.0.1"
+set "VER=1.1.0"
 set "NAME=QuickShot-%VER%-win64"
 set "OUT=%~dp0..\releases\%NAME%.exe"
 if exist "%OUT%" (
@@ -11,7 +11,7 @@ if exist "%OUT%" (
 )
 py -3 -m pip install --disable-pip-version-check -r "%~dp0requirements.txt"
 if errorlevel 1 exit /b 1
-py -3 -m PyInstaller --noconfirm --clean --onefile --windowed --name %NAME% main.py
+py -3 -m PyInstaller --noconfirm --clean --onefile --windowed --name %NAME% --add-data "extension;extension" main.py
 if errorlevel 1 exit /b 1
 if not exist "dist\%NAME%.exe" (
   echo EXE was not produced.

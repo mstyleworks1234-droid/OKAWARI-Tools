@@ -10,22 +10,49 @@ import sys
 import time
 import tkinter as tk
 
-VERSION = "1.0.1"
+import bridge
+import pngsave
+
+VERSION = "1.1.0"
 
 STRINGS = {
     "ja": {
         "exit": "終了",
         "copied": "コピーしました",
         "failed": "コピーに失敗しました",
-        "tip": "クリックして範囲を選択",
+        "tip": "上: 範囲  中: 画面全体  下: ページ全体",
         "already": "QuickShot はすでに起動しています。",
+        "screen": "画面全体を保存",
+        "page": "ページ全体を保存",
+        "saved_one": "画面全体を保存しました",
+        "saved_many": "{n}台の画面を1枚に保存しました",
+        "screen_failed": "画面全体の保存に失敗しました",
+        "screen_large": "画面が広すぎて1枚に保存できません",
+        "page_start": "ページを上から撮影しています",
+        "page_saved": "ページ全体を保存しました",
+        "page_truncated": "ページが長いため、上から一部まで保存しました",
+        "page_failed": "ページ全体の撮影に失敗しました",
+        "page_timeout": "ページ全体の撮影が完了しませんでした",
+        "page_setup_title": "ページ全体の初回設定",
     },
     "en": {
         "exit": "Exit",
         "copied": "Copied",
         "failed": "Copy failed",
-        "tip": "Click to select an area",
+        "tip": "Top: area  Middle: screen  Bottom: page",
         "already": "QuickShot is already running.",
+        "screen": "Save entire screen",
+        "page": "Save entire page",
+        "saved_one": "Saved the entire screen",
+        "saved_many": "Saved {n} monitors as one image",
+        "screen_failed": "Could not save the entire screen",
+        "screen_large": "The desktop is too large to save as one image",
+        "page_start": "Capturing the page from the top",
+        "page_saved": "Saved the entire page",
+        "page_truncated": "The page was long, so only the top portion was saved",
+        "page_failed": "Could not capture the entire page",
+        "page_timeout": "The page capture did not finish",
+        "page_setup_title": "One-time page capture setup",
     },
 }
 
@@ -52,13 +79,14 @@ def monitor_for_point(x, y, mons):
     )
 
 
-def clamp_button(x, y, size, mons):
-    mon = monitor_for_point(x + size / 2, y + size / 2, mons)
+def clamp_button(x, y, size, mons, height=None):
+    span_h = size if height is None else height
+    mon = monitor_for_point(x + size / 2, y + span_h / 2, mons)
     left, top, right, bottom = mon[5], mon[6], mon[7], mon[8]
-    if right - left < size or bottom - top < size:
+    if right - left < size or bottom - top < span_h:
         left, top, right, bottom = mon[0], mon[1], mon[2], mon[3]
     nx = min(max(int(x), left), max(left, right - size))
-    ny = min(max(int(y), top), max(top, bottom - size))
+    ny = min(max(int(y), top), max(top, bottom - span_h))
     return nx, ny, mon[4]
 
 
@@ -69,7 +97,7 @@ def default_button_origin():
     size = button_size(dpi)
     x = right - size - 16
     y = top + max(0, (bottom - top - size) // 2)
-    x, y, dpi = clamp_button(x, y, size, mons)
+    x, y, dpi = clamp_button(x, y, size, mons, size * 3)
     return x, y, button_size(dpi)
 
 
@@ -109,6 +137,11 @@ class App:
         self.tip = None
         self.tip_job = None
         self.toast = None
+        self.toast_job = None
+        self.page_job = None
+        self.page_started = 0
+        self.bridge = None
+        self.setup = None
         self.root = tk.Tk()
         self.root.withdraw()
         self.root.title("QuickShotResident")
@@ -133,6 +166,12 @@ class App:
         self.win.attributes("-topmost", True)
         self.root.update_idletasks()
         capture.exclude_window_from_capture(int(self.win.winfo_id()))
+        try:
+            self.bridge = bridge.Bridge()
+            self.extension_dir = self.bridge.start()
+        except Exception:
+            self.bridge = None
+            self.extension_dir = ""
 
     def tr(self, key):
         return STRINGS.get(self.lang, STRINGS["en"]).get(key, key)
@@ -153,7 +192,7 @@ class App:
         if isinstance(saved_x, (int, float)) and isinstance(saved_y, (int, float)):
             mons = capture.monitors()
             size = button_size(monitor_for_point(saved_x, saved_y, mons)[4])
-            x, y, dpi = clamp_button(saved_x, saved_y, size, mons)
+            x, y, dpi = clamp_button(saved_x, saved_y, size, mons, size * 3)
             self.apply_geometry(x, y, button_size(dpi))
         else:
             x, y, size = default_button_origin()
@@ -161,16 +200,20 @@ class App:
 
     def apply_geometry(self, x, y, size):
         self.size = int(size)
+        self.height = self.size * 3
         self.pos = (int(x), int(y))
-        self.icon.configure(width=self.size, height=self.size)
-        self.win.geometry(f"{self.size}x{self.size}+{self.pos[0]}+{self.pos[1]}")
+        self.icon.configure(width=self.size, height=self.height)
+        self.win.geometry(f"{self.size}x{self.height}+{self.pos[0]}+{self.pos[1]}")
         self.draw_icon()
 
     def draw_icon(self):
         size = self.size
         canvas = self.icon
         canvas.delete("all")
-        canvas.create_rectangle(0, 0, size, size, fill="#1d4ed8", outline="")
+        colors = ("#1d4ed8", "#1e40af", "#1e3a8a")
+        for index, color in enumerate(colors):
+            top = index * size
+            canvas.create_rectangle(0, top, size, top + size, fill=color, outline="")
         canvas.create_rectangle(size * 0.22, size * 0.40, size * 0.78, size * 0.72, fill="white", outline="")
         canvas.create_polygon(
             size * 0.36, size * 0.40,
@@ -180,6 +223,10 @@ class App:
             fill="white", outline="",
         )
         canvas.create_oval(size * 0.40, size * 0.46, size * 0.60, size * 0.66, fill="#1d4ed8", outline="")
+        canvas.create_rectangle(size * 0.22, size + size * 0.22, size * 0.78, size + size * 0.78, outline="white", width=2)
+        canvas.create_line(size * 0.28, size * 2 + size * 0.34, size * 0.72, size * 2 + size * 0.34, fill="white", width=2)
+        canvas.create_line(size * 0.28, size * 2 + size * 0.50, size * 0.72, size * 2 + size * 0.50, fill="white", width=2)
+        canvas.create_line(size * 0.28, size * 2 + size * 0.66, size * 0.56, size * 2 + size * 0.66, fill="white", width=2)
 
     def save_settings(self):
         try:
@@ -243,19 +290,28 @@ class App:
             mons = capture.monitors()
             drop_x = origin[0] + dx
             drop_y = origin[1] + dy
-            dpi = monitor_for_point(drop_x + self.size / 2, drop_y + self.size / 2, mons)[4]
+            dpi = monitor_for_point(drop_x + self.size / 2, drop_y + self.height / 2, mons)[4]
             size = button_size(dpi)
-            x, y, _dpi = clamp_button(drop_x, drop_y, size, mons)
+            x, y, _dpi = clamp_button(drop_x, drop_y, size, mons, size * 3)
             self.apply_geometry(x, y, size)
             self.save_settings()
         else:
-            self.begin_select()
+            zone = int(event.y // self.size) if self.size else 0
+            if zone <= 0:
+                self.begin_select()
+            elif zone == 1:
+                self.capture_screen()
+            else:
+                self.capture_page()
         return "break"
 
     def on_right_click(self, event):
         self.hide_tip()
         menu = tk.Menu(self.win, tearoff=0)
         menu.add_command(label=f"QuickShot {VERSION}", state="disabled")
+        menu.add_command(label=self.tr("screen"), command=self.capture_screen)
+        menu.add_command(label=self.tr("page"), command=self.capture_page)
+        menu.add_separator()
         menu.add_command(
             label="日本語 ✓" if self.lang == "ja" else "日本語",
             command=lambda: self.set_lang("ja"),
@@ -312,6 +368,12 @@ class App:
             self.tip = None
 
     def close_toast(self):
+        if self.toast_job is not None:
+            try:
+                self.root.after_cancel(self.toast_job)
+            except tk.TclError:
+                pass
+            self.toast_job = None
         if self.toast is not None:
             try:
                 self.toast.destroy()
@@ -320,6 +382,9 @@ class App:
             self.toast = None
 
     def show_toast(self, key):
+        self.show_notice(self.tr(key), 1200)
+
+    def show_notice(self, text, ms=6000):
         self.close_toast()
         toast = tk.Toplevel(self.root)
         toast.withdraw()
@@ -327,21 +392,151 @@ class App:
         toast.attributes("-topmost", True)
         toast.configure(bg="#16181d")
         tk.Label(
-            toast, text=self.tr(key), bg="#16181d", fg="white",
-            font=("Segoe UI", 10), padx=12, pady=8,
+            toast, text=text, bg="#16181d", fg="white",
+            font=("Segoe UI", 10), padx=12, pady=8, wraplength=360, justify="left",
         ).pack()
         toast.update_idletasks()
-        width = toast.winfo_reqwidth()
         height = toast.winfo_reqheight()
         x = self.win.winfo_x()
         y = self.win.winfo_y() - height - 8
         if y < capture.virtual_screen()[1]:
-            y = self.win.winfo_y() + self.size + 8
+            y = self.win.winfo_y() + self.height + 8
         toast.geometry(f"+{int(x)}+{int(y)}")
         toast.deiconify()
         capture.exclude_window_from_capture(int(toast.winfo_id()))
         self.toast = toast
-        self.root.after(1000, self.close_toast)
+        self.toast_job = self.root.after(ms, self.close_toast)
+
+    def capture_screen(self):
+        if self.busy or self.closing:
+            return
+        self.busy = True
+        try:
+            self.close_toast()
+            self.hide_button()
+            self.root.update()
+            path, count, _width, _height = pngsave.save_full_screen()
+            self.show_button()
+            label = self.tr("saved_one") if count <= 1 else self.tr("saved_many").format(n=count)
+            self.show_notice(label + "\n" + path)
+        except ValueError:
+            self.show_button()
+            self.show_notice(self.tr("screen_large"))
+        except Exception:
+            self.show_button()
+            self.show_notice(self.tr("screen_failed"))
+        finally:
+            self.busy = False
+
+    def capture_page(self):
+        if self.busy or self.closing:
+            return
+        if self.bridge is None or not self.bridge.connected():
+            self.show_setup()
+            return
+        self.busy = True
+        self.page_started = time.time()
+        self.page_path = None
+        self.page_done = False
+        self.page_truncated = False
+        try:
+            self.bridge.request_capture()
+        except Exception:
+            self.busy = False
+            self.show_notice(self.tr("page_failed"))
+            return
+        self.show_notice(self.tr("page_start"), 30000)
+        self.root.after(300, self.poll_page)
+
+    def poll_page(self):
+        if not self.busy:
+            return
+        saved = None
+        failed = None
+        try:
+            messages = self.bridge.take_messages() if self.bridge else []
+        except Exception:
+            messages = []
+        for message in messages:
+            kind = message.get("type")
+            if kind == "progress" and message.get("text"):
+                self.show_notice(str(message["text"]), 30000)
+            elif kind == "png":
+                try:
+                    path = pngsave.unique_png("page")
+                    with open(path, "wb") as handle:
+                        handle.write(message["data"])
+                    saved = path
+                    self.page_path = path
+                except Exception:
+                    failed = self.tr("page_failed")
+            elif kind == "error":
+                failed = str(message.get("message") or self.tr("page_failed"))
+            elif kind == "done":
+                self.page_done = True
+                self.page_truncated = bool(message.get("truncated"))
+        if failed:
+            self.busy = False
+            self.show_notice(failed)
+            return
+        if self.page_path and self.page_done:
+            self.busy = False
+            label = self.tr("page_truncated") if self.page_truncated else self.tr("page_saved")
+            self.show_notice(label + "\n" + self.page_path)
+            return
+        if time.time() - self.page_started > 90:
+            self.busy = False
+            self.show_notice(self.tr("page_timeout"))
+            return
+        self.root.after(300, self.poll_page)
+
+    def show_setup(self):
+        if self.setup is not None:
+            try:
+                self.setup.lift()
+                return
+            except tk.TclError:
+                self.setup = None
+        folder = self.extension_dir or ""
+        if self.lang == "ja":
+            text = (
+                "ページ全体の撮影には、初回だけ拡張機能の読み込みが必要です。\n"
+                "ブラウザは終了も再起動もしません。\n\n"
+                "1. QuickShot を起動したまま、Chrome または Edge で拡張機能の管理を開く\n"
+                "2. デベロッパーモードをオンにする\n"
+                "3. 「パッケージ化されていない拡張機能を読み込む」で次のフォルダを選ぶ\n"
+                f"{folder}\n"
+                "4. すでに読み込んでいる場合は、その拡張機能を再読み込みする\n"
+                "5. 撮影したい http(s) のページを表示し、下のボタンを押す\n\n"
+                "chrome:// のページや、拡張機能が未接続のときは撮影できません。"
+            )
+        else:
+            text = (
+                "Full-page capture needs the extension loaded once.\n"
+                "QuickShot does not close or restart the browser.\n\n"
+                "1. Keep QuickShot running and open the extensions page in Chrome or Edge\n"
+                "2. Turn on Developer mode\n"
+                "3. Choose Load unpacked and select this folder\n"
+                f"{folder}\n"
+                "4. If it is already loaded, reload that extension\n"
+                "5. Open the http(s) page and press the bottom button\n\n"
+                "chrome:// pages cannot be captured, and capture fails until the extension is connected."
+            )
+        window = tk.Toplevel(self.root)
+        window.title(self.tr("page_setup_title"))
+        window.configure(bg="white")
+        window.geometry("520x360")
+        tk.Label(window, text=text, bg="white", justify="left", wraplength=480, padx=16, pady=16).pack(fill="both", expand=True)
+        self.setup = window
+        window.protocol("WM_DELETE_WINDOW", self.close_setup)
+
+    def close_setup(self):
+        if self.setup is not None:
+            try:
+                self.setup.destroy()
+            except tk.TclError:
+                pass
+            self.setup = None
 
     def hide_button(self):
         self.hide_tip()
@@ -500,6 +695,9 @@ class App:
 
 
 def main():
+    if "--native-host" in sys.argv or (getattr(sys, "frozen", False) and bridge.stdio_is_pipe()):
+        bridge.run_native_host()
+        return 0
     if sys.platform != "win32":
         print("QuickShot supports Windows only.")
         return 1

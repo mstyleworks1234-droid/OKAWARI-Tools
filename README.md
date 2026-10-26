@@ -14,18 +14,19 @@ OKAWARI-Tools/
 
 アプリ本体のソースは独自実装です。実行時の追加ライブラリはありません。EXE には Python ランタイムと PyInstaller のブートローダーが含まれます。
 
-## QuickShot 1.0.1
+## QuickShot 1.1.16
 
-マウスだけで画面の範囲を選び、画像をクリップボードへコピーします。
+公開中の版は 1.1.16 です。ダウンロードと導入手順は `https://okawari-tools.pages.dev/quickshot.html` にあります。配布EXEは GitHub Releases の `quickshot-1.1.16` です。
 
-- 起動すると画面端にカメラボタンが出ます
-- クリックしてドラッグし、離すとコピーされます
-- Esc でキャンセルします
-- ボタンはドラッグで移動でき、位置は `%APPDATA%\OKAWARI\QuickShot\settings.json` に保存されます
-- 右クリックから言語の切り替えと終了ができます
-- 範囲指定の撮影はクリップボードだけに入り、ファイルには保存しません
-- 画面全体とページ全体は `%USERPROFILE%\Pictures\QuickShot` に PNG で保存します
-- 外部通信、会員登録、自動更新、管理者権限、スタートアップ登録はありません
+- ファイル: `releases/QuickShot-1.1.16-win64.exe`
+- サイズ: 11,182,287 bytes
+- SHA-256: `39D43D03524698174EB14B978AEA1682B571757D702AEC25C303305FCEED4484`
+
+このEXEはコード署名をしていません。実行する前に、公開ページのSHA-256と手元のファイルを比べてください。
+
+バージョンを上げるときは `quickshot/main.py` の `VERSION`、`quickshot/extension/manifest.json`、`quickshot/build.bat`、`website/catalog.js` を同じ番号にします。確認は `py -3 website/check_site.py` です。
+
+画面の範囲、画面全体、ページ全体、ChatGPTの会話をPNGで保存します。ページ全体と会話の撮影には、ChromeまたはEdgeの拡張機能が必要です。拡張機能はChromeウェブストアでは公開していません。導入手順は公開ページにあります。
 
 ### ソースから起動
 
@@ -36,104 +37,24 @@ cd quickshot
 pyw -3 main.py
 ```
 
-コンソールを出したくないときは `pyw` を使います。`py -3 main.py` でも動作しますが、コンソール窓が残ります。
-
-### EXE
-
-生成済みです。
-
-- 公開するファイル: `releases/QuickShot-1.0.1-win64.exe`
-- サイズ: 10,448,445 bytes（約 9.97 MB）
-- SHA-256: `4DF24466E9770808A0593D5A8B2D059C70460E81497A4AEBA88EAB800C766479`
-- `releases/QuickShot-1.0.0-win64.exe` は残してあり、上書きしていません。1.0.1 は、ボタンがタスクバーの下に入らないようにした版です。
-- 形式: 64ビット、ウィンドウアプリ（コンソールなし）、単体 EXE
-- 同じファイル名の再ビルドは `build.bat` が拒否します。過去のリリースを上書きしません
-
-確認例:
-
-```powershell
-Get-FileHash .\releases\QuickShot-1.0.1-win64.exe -Algorithm SHA256
-```
-
-この初期版はコード署名をしていません。ダウンロードした EXE を初めて開くと、「Windows によって PC が保護されました」と出ることがあります。その場合は「詳細情報」→「実行」です。Windows の保護機能を避ける仕組みは入れていません。
-
 ### 再ビルド
-
-新しいバージョン番号にしてから実行します。`quickshot/build.bat` と `quickshot/main.py` の `VERSION`、サイトの `website/app.js` の `RELEASE` を同じ番号に揃えてください。
 
 ```bat
 cd quickshot
 build.bat
 ```
 
-`build.bat` は開発環境に PyInstaller を入れ、`releases/QuickShot-<version>-win64.exe` を作ります。既存ファイルがある場合は中止します。
+`build.bat` は、同じファイル名のEXEが `releases` にあると中止します。過去のEXEは削除しません。
 
-## サイトの確認
+## サイト
 
-`website/index.html` をブラウザで開きます。ビルドコマンドは不要です。言語はページ右上で日本語と英語を切り替え、選択はブラウザの localStorage にだけ残ります。
+公開URLは `https://okawari-tools.pages.dev` です。Cloudflare Pages の出力ディレクトリは `website`、ビルドコマンドは空です。EXEはPagesに置かず、GitHub Releasesに置きます。
 
-ダウンロードボタンは、`website/app.js` の `GITHUB_RELEASE_URL` が実在する URL で、バイト数と SHA-256 もあるときだけ有効になります。いまは空なので、公開サイトでは無効です。手元のフォルダで EXE を試すときだけ、値を `../releases/QuickShot-1.0.1-win64.exe` にします。
+ダウンロード先、バージョン、サイズ、SHA-256は `website/catalog.js` が元です。`py -3 website/check_site.py` が、アプリ、拡張機能、EXE、ページ内リンク、sitemapを照合します。
 
-リリースノートは `releases/QuickShot-1.0.1-notes.md` です。
+新しいツールを追加するときは、`catalog.js` に項目を足し、製品ページを `website` に置き、`sitemap.xml` にURLを追加してから `check_site.py` を実行します。
 
-## 公開手順
-
-公開用の URL、GitHub のオーナー名、ドメイン、連絡先は未定です。仮のアドレスは置いていません。アップロードはこの手順書では行いません。
-
-### GitHub Releases に置くファイル
-
-今回のリリースにアップロードするのは次の2つです。
-
-- `releases/QuickShot-1.0.1-win64.exe`（10,448,445 bytes）
-- `releases/QuickShot-1.0.1-win64.sha256`
-
-`QuickShot-1.0.0-win64.exe` はリポジトリ内に残しますが、このリリースには含めません。ソース、`website/`、ビルド途中のファイルは Releases に上げません。
-
-1. GitHub に空のリポジトリを作り、このフォルダを push します。
-2. タグ `quickshot-1.0.1` で Release を作ります。
-3. 上の2ファイルをその Release にアップロードします。
-4. 説明文は `releases/QuickShot-1.0.1-notes.md` を貼ります。
-5. ブラウザで EXE のリンクを開き、アドレスをコピーします。形は `https://github.com/<owner>/<repo>/releases/download/quickshot-1.0.1/QuickShot-1.0.1-win64.exe` です。`<owner>` と `<repo>` は、作ったリポジトリのものです。
-6. その実在 URL を `website/app.js` の `GITHUB_RELEASE_URL` に貼り、サイトを更新してから Pages を再デプロイします。
-
-### Cloudflare Pages
-
-静的ファイルだけです。Node.js、ビルド、データベース、環境変数は不要です。
-
-| 項目 | 値 |
-| --- | --- |
-| 本番ブランチ | 公開に使うブランチ |
-| ルートディレクトリ | 空（リポジトリのルート） |
-| ビルドコマンド | 空 |
-| ビルド出力ディレクトリ | `website` |
-| フレームワーク | None |
-
-`website/` だけが公開されます。EXE は Pages に置かず、GitHub Releases に置きます。公開前に、Pages の1ファイル上限と EXE の配布条件を確認します。この EXE は 10,448,445 bytes です。
-
-### 公開後のダウンロード確認
-
-1. 公開サイトの QuickShot ページを開く。
-2. 日本語と英語を切り替え、バージョンが 1.0.1、ファイル名が `QuickShot-1.0.1-win64.exe`、サイズが 10,448,445 bytes、SHA-256 が `4DF24466E9770808A0593D5A8B2D059C70460E81497A4AEBA88EAB800C766479` であること。
-3. ダウンロードボタンが GitHub Releases の EXE を直接開くこと。広告や別ページを経由しないこと。
-4. 保存した EXE の SHA-256 を次のコマンドで比べる。
-
-```powershell
-Get-FileHash .\QuickShot-1.0.1-win64.exe -Algorithm SHA256
-```
-
-5. プライバシーポリシーと利用規約が開けること。
-6. EXE を起動し、範囲をコピーして、右クリックの「終了」でプロセスが残らないこと。
-7. 未署名のため、初回は「Windows によって PC が保護されました」が出ることがあります。「詳細情報」→「実行」です。
-
-### 人が設定する項目
-
-- GitHub のオーナー、リポジトリ名、公開ブランチ
-- `website/app.js` の `GITHUB_RELEASE_URL`（Release 作成後の実在 URL）
-- Cloudflare Pages のアカウントと、使うドメイン（任意）
-- プライバシーポリシーの連絡先。現在の文面は「公開用の連絡先は、まだ設定していません。」です。アドレスは入っていません
-- コード署名は任意です。未署名のままでも公開できます
-
-広告タグは入れていません。入れるときはプライバシーポリシーを先に更新し、ダウンロードを広告の後ろに隠さないでください。
+連絡先は未設定です。広告ユニットは表示していません。所有確認用のAdSenseメタタグだけがあります。
 
 ## テスト結果（2026-10-17、この PC）
 

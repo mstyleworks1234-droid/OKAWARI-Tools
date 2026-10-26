@@ -54,12 +54,27 @@ def host_manifest_path():
 
 
 def native_host_command():
-    if getattr(sys, "frozen", False):
-        return sys.executable
-    return os.path.join(os.path.dirname(os.path.abspath(__file__)), "native_host.bat")
+    if not getattr(sys, "frozen", False):
+        return os.path.join(os.path.dirname(os.path.abspath(__file__)), "native_host.bat")
+    # Chrome starts this console launcher. The windowed EXE is only the GUI,
+    # so launching it directly makes a second copy that exits immediately.
+    # The launcher text stays ASCII; %~dp0 keeps the real directory.
+    exe = os.path.abspath(sys.executable)
+    launcher = os.path.join(os.path.dirname(exe), "quickshot-host.cmd")
+    script = '@echo off\r\n"%%~dp0%s" --native-host\r\n' % os.path.basename(exe)
+    current = ""
+    if os.path.exists(launcher):
+        with open(launcher, encoding="ascii", errors="replace") as handle:
+            current = handle.read()
+    if current != script:
+        with open(launcher, "w", encoding="ascii", newline="") as handle:
+            handle.write(script)
+    return launcher
 
 
 def register_native_host():
+    if os.environ.get("QUICKSHOT_KEEP_HOST") == "1":
+        return host_manifest_path()
     path = native_host_command()
     manifest = {
         "name": HOST_NAME,
@@ -85,6 +100,7 @@ class Bridge:
         self.token = ""
         self.port = 0
         self.command = None
+        self.report_until = 0.0
         self.last_seen = 0.0
         self.inbox = []
         self.lock = threading.Lock()
@@ -111,9 +127,13 @@ class Bridge:
     def connected(self):
         return time.time() - self.last_seen < 45
 
-    def request_capture(self):
+    def request_capture(self, mode="page"):
         with self.lock:
-            self.command = {"type": "capture"}
+            self.command = {"type": "capture", "mode": "chat" if mode == "chat" else "page"}
+
+    def request_report(self):
+        with self.lock:
+            self.report_until = time.time() + 1.2
 
     def take_messages(self):
         with self.lock:
@@ -170,7 +190,7 @@ class _Handler(BaseHTTPRequestHandler):
             return
         bridge = self.server.bridge
         bridge.last_seen = time.time()
-        deadline = time.time() + 20
+        deadline = time.time() + 1
         command = None
         while time.time() < deadline:
             with bridge.lock:
@@ -178,7 +198,10 @@ class _Handler(BaseHTTPRequestHandler):
                     command = bridge.command
                     bridge.command = None
                     break
-            time.sleep(0.1)
+                if time.time() < bridge.report_until:
+                    command = {"type": "report"}
+                    break
+            time.sleep(0.05)
         if command is None:
             command = {"type": "idle"}
         self._send(200, json.dumps(command).encode("utf-8"))
@@ -208,8 +231,18 @@ class _Handler(BaseHTTPRequestHandler):
             if not data.startswith(b"\x89PNG\r\n\x1a\n"):
                 self._send(400, b"{}")
                 return
+            part = 0
+            raw_part = self.headers.get("X-QuickShot-Part", "")
+            if raw_part:
+                try:
+                    part = int(raw_part)
+                except ValueError:
+                    part = 0
+            item = {"type": "png", "data": data}
+            if part > 0:
+                item["part"] = part
             with bridge.lock:
-                bridge.inbox.append({"type": "png", "data": data})
+                bridge.inbox.append(item)
             self._send(200, b"{}")
             return
         self._send(404, b"{}")
@@ -246,50 +279,84 @@ def _request(info, method, path, body=None, content_type="application/json"):
         return response.read()
 
 
-def _stdin_loop(info):
-    while True:
+def host_log(text):
+    try:
+        path = os.path.join(app_dir(), "quickshot.log")
+        line = time.strftime("%Y-%m-%d %H:%M:%S ") + str(text).replace("\r", " ").replace("\n", " | ")[:1000]
+        with open(path, "a", encoding="utf-8") as handle:
+            handle.write(line + "\n")
+    except Exception:
+        return
+
+
+def _stdin_loop(info, stop):
+    while not stop.is_set():
         try:
             message = _read_message()
         except Exception:
+            host_log("host stdin error")
+            stop.set()
             return
         if message is None:
+            host_log("host stdin closed")
+            stop.set()
             return
         try:
             _request(info, "POST", "/event", json.dumps(message).encode("utf-8"))
         except Exception:
-            return
+            continue
+
+
+def _host_identity():
+    args = " ".join(sys.argv)[:240]
+    return "pid=%s ppid=%s argv=%s" % (os.getpid(), os.getppid(), args)
 
 
 def run_native_host():
+    host_log("host start " + _host_identity())
     try:
         with open(bridge_path(), encoding="utf-8") as handle:
             info = json.load(handle)
         _send_message({"type": "hello", "port": info["port"], "token": info["token"]})
         _request(info, "POST", "/hello", b"{}")
     except Exception:
+        host_log("host exit no-bridge")
         try:
             _send_message({"type": "error", "message": "QuickShot が起動していません。"})
         except Exception:
             pass
         return
-    threading.Thread(target=_stdin_loop, args=(info,), daemon=True).start()
-    while True:
+    stop = threading.Event()
+    threading.Thread(target=_stdin_loop, args=(info, stop), daemon=True).start()
+    failures = 0
+    while not stop.is_set():
         try:
             raw = _request(info, "GET", "/command")
             command = json.loads(raw.decode("utf-8"))
+            failures = 0
         except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, OSError):
-            return
-        if command.get("type") == "capture":
+            failures += 1
+            if failures >= 3:
+                host_log("host exit bridge-lost")
+                return
+            time.sleep(0.4)
+            continue
+        if command.get("type") in ("capture", "report"):
             try:
                 _send_message(command)
             except Exception:
+                host_log("host exit send-failed")
                 return
+    host_log("host exit stdin")
 
 
 def stdio_is_pipe():
     import ctypes
 
     kernel32 = ctypes.windll.kernel32
+    kernel32.GetStdHandle.restype = ctypes.c_void_p
+    kernel32.GetFileType.argtypes = [ctypes.c_void_p]
+    kernel32.GetFileType.restype = ctypes.c_ulong
     handle = kernel32.GetStdHandle(-10)
     if not handle or handle == ctypes.c_void_p(-1).value:
         return False

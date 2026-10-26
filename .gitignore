@@ -11,4 +11,4 @@ ImagePort/backups/
 *.log
 *.exe
 
-# Release EXEs are published through GitHub Releases, not this repository.
+backups/

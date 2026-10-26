@@ -3,9 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="canonical" href="https://okawari-tools.pages.dev/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="OKAWARI Tools">
+  <meta property="og:title" content="OKAWARI Tools">
+  <meta property="og:description" content="Windows向けの無料ツール OKAWARI Tools。QuickShotは画面、ページ全体、ChatGPTの会話をPNGで保存できます。">
+  <meta property="og:url" content="https://okawari-tools.pages.dev/">
+  <meta property="og:locale" content="ja_JP">
+  <meta property="og:locale:alternate" content="en_US">
   <meta name="google-adsense-account" content="ca-pub-5071302865760255">
   <title>OKAWARI Tools</title>
-  <meta name="description" content="1つの面倒を、1クリックで解決する。Windows向け無料ツール OKAWARI Tools。">
+  <meta name="description" content="Windows向けの無料ツール OKAWARI Tools。QuickShotは画面、ページ全体、ChatGPTの会話をPNGで保存できます。">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -26,20 +34,20 @@
     <section class="section panel">
       <p><span class="badge" data-i18n="status_live">公開中</span></p>
       <h2>QuickShot</h2>
-      <p data-i18n="card_summary">マウスで範囲を選ぶと、画像がクリップボードにコピーされます。</p>
+      <p data-i18n="card_summary">画面の範囲、画面全体、ページ全体、ChatGPTの会話をPNGで保存できます。</p>
       <ul class="feature-list">
-        <li data-i18n="f1">マウスで範囲を選ぶだけです。</li>
-        <li data-i18n="f2">撮影後、画像は自動でクリップボードにコピーされます。</li>
-        <li data-i18n="f3">保存画面も編集画面も開きません。</li>
-        <li data-i18n="f4">撮影にキーボードショートカットは不要です。中止するときは Esc を押せます。</li>
+        <li data-i18n="f1">範囲指定、画面全体、ページ全体を撮影できます。</li>
+        <li data-i18n="f2">画像はPNGで保存します。初期設定ではクリップボードにもコピーします。</li>
+        <li data-i18n="f3">保存した画像の文字認識と、切り抜きやモザイクなどの簡単な編集ができます。</li>
+        <li data-i18n="f4">ページ全体とChatGPTの会話撮影には、ChromeまたはEdgeの拡張機能が必要です。</li>
         <li data-i18n="f5">無料で、会員登録は不要です。</li>
         <li data-i18n="f6">Windows 10 / 11 の64ビットに対応しています。</li>
       </ul>
       <h3 data-i18n="howto_heading">使い方</h3>
       <ol class="steps">
-        <li class="step"><strong>1</strong><span data-i18n="s1">QuickShotを起動します。</span></li>
-        <li class="step"><strong>2</strong><span data-i18n="s2">マウスで撮影範囲を選びます。カメラボタンをクリックし、ドラッグして離すとコピーされます。</span></li>
-        <li class="step"><strong>3</strong><span data-i18n="s3">コピーされた画像を、貼り付け先で Ctrl+V します。</span></li>
+        <li class="step"><strong>1</strong><span data-i18n="s1">QuickShotを起動します。画面端に操作パネルが出ます。</span></li>
+        <li class="step"><strong>2</strong><span data-i18n="s2">範囲指定、画面全体、または拡張機能が接続されたページ撮影を選びます。</span></li>
+        <li class="step"><strong>3</strong><span data-i18n="s3">画像は保存先のフォルダにPNGで保存されます。初期設定ではクリップボードにもコピーされます。</span></li>
       </ol>
       <!-- Real screenshot only. Do not place a mock image here. -->
       <figure class="shot-slot">
@@ -53,7 +61,7 @@
         <article class="tool-card">
           <p><span class="badge" data-i18n="status_live">公開中</span></p>
           <h3>QuickShot</h3>
-          <p data-i18n="card_summary">マウスで範囲を選ぶと、画像がクリップボードにコピーされます。</p>
+          <p data-i18n="card_summary">画面の範囲、画面全体、ページ全体、ChatGPTの会話をPNGで保存できます。</p>
           <a class="btn btn-secondary" href="quickshot.html" data-i18n="card_link">無料でダウンロード</a>
         </article>
         <article class="tool-card">
@@ -80,6 +88,17 @@
       </nav>
     </div>
   </footer>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "OKAWARI Tools",
+    "url": "https://okawari-tools.pages.dev/",
+    "description": "Windows向けの無料ツール。第1弾はQuickShotです。",
+    "inLanguage": ["ja", "en"]
+  }
+  </script>
+  <script src="catalog.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

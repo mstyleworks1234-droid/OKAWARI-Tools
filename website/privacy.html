@@ -3,6 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="canonical" href="https://okawari-tools.pages.dev/privacy.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="OKAWARI Tools">
+  <meta property="og:title" content="プライバシーポリシー - OKAWARI Tools">
+  <meta property="og:description" content="OKAWARI ToolsとQuickShotのプライバシーポリシー。現在の実装に基づきます。">
+  <meta property="og:url" content="https://okawari-tools.pages.dev/privacy.html">
+  <meta property="og:locale" content="ja_JP">
   <meta name="google-adsense-account" content="ca-pub-5071302865760255">
   <title>プライバシーポリシー - OKAWARI Tools</title>
   <meta name="description" content="OKAWARI ToolsとQuickShotのプライバシーポリシー。現在の実装に基づきます。">
@@ -19,15 +26,19 @@
   </header>
   <main id="main" class="wrap">
     <h1 data-i18n="footer_privacy">プライバシーポリシー</h1>
-    <p class="note" data-i18n="privacy_updated">2026年10月17日 更新</p>
-    <p data-i18n="privacy_intro">このポリシーは、現在のOKAWARI Toolsウェブサイトと、QuickShot 1.0.1の実装について説明します。将来機能を変える場合は、このページを更新します。</p>
+    <p class="note" data-i18n="privacy_updated">2026年10月26日 更新</p>
+    <p data-i18n="privacy_intro">このポリシーは、現在のOKAWARI Toolsウェブサイトと、QuickShot 1.1.16の実装について説明します。将来機能を変える場合は、このページを更新します。</p>
     <section class="section">
       <h2 data-i18n="privacy_h_site">ウェブサイト</h2>
-      <p data-i18n="privacy_site">このサイトは静的なHTMLです。会員登録、ログイン、アクセス解析、広告タグはありません。外部のフォントや外部スクリプトは読み込みません。表示言語の選択は、ブラウザの localStorage（キー名 okawari-lang）にだけ保存されます。この値を当方のサーバーへ送る機能はありません。</p>
+      <p data-i18n="privacy_site">このサイトは静的なHTMLです。会員登録、ログイン、アクセス解析はありません。サイト所有の確認用に Google AdSense のアカウントメタタグを置いています。広告ユニットは表示していません。外部のフォントや外部スクリプトは読み込みません。表示言語の選択は、ブラウザの localStorage（キー名 okawari-lang）にだけ保存されます。この値を当方のサーバーへ送る機能はありません。</p>
     </section>
     <section class="section">
       <h2 data-i18n="privacy_h_app">QuickShot</h2>
-      <p data-i18n="privacy_app">アカウント登録はありません。スクリーンショットはファイルとして保存せず、選択した範囲の画像をWindowsのクリップボードへコピーします。画像はアプリのメモリ上で処理し、開発者や外部のサーバーへは送信しません。常駐ボタンの位置と言語は、お使いのパソコンの %APPDATA%\OKAWARI\QuickShot\settings.json に保存します。アプリに自動更新はなく、起動後に外部と通信しません。</p>
+      <p data-i18n="privacy_app">アカウント登録はありません。撮影した画像は、お使いのパソコン内にPNGで保存します。初期の保存先はピクチャの QuickShot フォルダで、設定から変更できます。初期設定ではクリップボードにもコピーします。画像は開発者や外部のサーバーへ送信しません。ボタンの位置、言語、保存先は %APPDATA%\OKAWARI\QuickShot\settings.json に保存します。撮影履歴も同じフォルダ内に残ります。操作ログは同じフォルダの quickshot.log に残り、開発者のサーバーへは送りません。ログには操作の成否に加え、拡張機能が接続しているときのサイトのホスト名とパスが入ることがあります。会話の本文やCookieは記録しません。アプリに自動更新はありません。</p>
+    </section>
+    <section class="section">
+      <h2 data-i18n="privacy_h_ext">拡張機能</h2>
+      <p data-i18n="privacy_ext">ページ全体とChatGPT会話の撮影には、ChromeまたはEdgeの拡張機能を使います。この拡張機能はChromeウェブストアでは配布していません。拡張機能は同じパソコンで起動しているQuickShotとだけ通信します。通信先は開発者のサーバーではありません。初回起動時に、現在のユーザーのレジストリへ Native Messaging の登録を行います。</p>
     </section>
     <section class="section">
       <h2 data-i18n="privacy_h_clip">クリップボード</h2>
@@ -35,7 +46,7 @@
     </section>
     <section class="section">
       <h2 data-i18n="privacy_h_ads">広告</h2>
-      <p data-i18n="privacy_ads">現在、ウェブサイトにもアプリにも広告は掲載していません。将来ウェブサイトに広告を載せる場合は、広告を見ないとダウンロードできない形にはせず、掲載前にこのポリシーへ事業者と取得される情報を追記します。</p>
+      <p data-i18n="privacy_ads">現在、ウェブサイトに広告ユニットは表示していません。アプリ内にも広告はありません。所有確認用のメタタグは広告の配信ではありません。将来ウェブサイトに広告を載せる場合は、広告を見ないとダウンロードできない形にはせず、掲載前にこのポリシーへ事業者と取得される情報を追記します。</p>
     </section>
     <section class="section">
       <h2 data-i18n="privacy_h_contact">連絡先</h2>
@@ -53,6 +64,7 @@
       </nav>
     </div>
   </footer>
+  <script src="catalog.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

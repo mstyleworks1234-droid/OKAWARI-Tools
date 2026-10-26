@@ -1,7 +1,7 @@
 @echo off
 setlocal EnableExtensions
 cd /d "%~dp0"
-set "VER=1.1.0"
+set "VER=1.1.16"
 set "NAME=QuickShot-%VER%-win64"
 set "OUT=%~dp0..\releases\%NAME%.exe"
 if exist "%OUT%" (

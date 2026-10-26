@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://okawari-tools.pages.dev/sitemap.xml

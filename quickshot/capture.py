@@ -216,6 +216,67 @@ def acquire_single_instance():
     return True
 
 
+def hold_topmost(hwnd, enabled):
+    """Keep a window above normal apps without activating it."""
+    if not hwnd:
+        return False
+    user32.SetWindowPos.restype = wintypes.BOOL
+    user32.SetWindowPos.argtypes = [
+        wintypes.HWND, ctypes.c_void_p,
+        ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, wintypes.UINT,
+    ]
+    insert = ctypes.c_void_p(-1 if enabled else -2)
+    return bool(user32.SetWindowPos(int(hwnd), insert, 0, 0, 0, 0, 0x0001 | 0x0002 | 0x0010))
+
+
+class _NotifyIcon(ctypes.Structure):
+    _fields_ = [
+        ("cbSize", wintypes.DWORD),
+        ("hWnd", wintypes.HWND),
+        ("uID", wintypes.UINT),
+        ("uFlags", wintypes.UINT),
+        ("uCallbackMessage", wintypes.UINT),
+        ("hIcon", wintypes.HICON),
+        ("szTip", wintypes.WCHAR * 128),
+    ]
+
+
+_shell32 = ctypes.WinDLL("shell32", use_last_error=True)
+_shell32.Shell_NotifyIconW.argtypes = [wintypes.DWORD, ctypes.POINTER(_NotifyIcon)]
+_shell32.Shell_NotifyIconW.restype = wintypes.BOOL
+user32.LoadIconW.argtypes = [wintypes.HINSTANCE, ctypes.c_void_p]
+user32.LoadIconW.restype = wintypes.HICON
+_tray = None
+
+
+def tray_add(hwnd):
+    """Show a notification icon for this GUI process. It does not start a new process."""
+    global _tray
+    if not hwnd:
+        return False
+    icon = user32.LoadIconW(None, ctypes.c_void_p(32512))
+    data = _NotifyIcon()
+    data.cbSize = ctypes.sizeof(_NotifyIcon)
+    data.hWnd = int(hwnd)
+    data.uID = 1
+    data.uFlags = 2 | 4
+    data.hIcon = icon
+    data.szTip = "QuickShot"
+    if not _shell32.Shell_NotifyIconW(0, ctypes.byref(data)):
+        return False
+    _tray = data
+    return True
+
+
+def tray_remove():
+    global _tray
+    if _tray is None:
+        return False
+    removed = bool(_shell32.Shell_NotifyIconW(2, ctypes.byref(_tray)))
+    _tray = None
+    return removed
+
+
 def exclude_window_from_capture(hwnd):
     """Ask DWM to leave this window out of screenshots. Best-effort."""
     if not hwnd:

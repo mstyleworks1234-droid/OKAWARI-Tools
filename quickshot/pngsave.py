@@ -34,9 +34,32 @@ def dib_to_png(dib):
     return b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", ihdr) + chunk(b"IDAT", compressed) + chunk(b"IEND", b"")
 
 
-def output_dir():
+_custom_dir = ""
+
+
+def default_output_dir():
     home = os.environ.get("USERPROFILE") or os.path.expanduser("~")
-    folder = os.path.join(home, "Pictures", "QuickShot")
+    return os.path.join(home, "Pictures", "QuickShot")
+
+
+def set_output_dir(path):
+    global _custom_dir
+    _custom_dir = ""
+    if not path or not isinstance(path, str):
+        return False
+    folder = os.path.abspath(path)
+    try:
+        os.makedirs(folder, exist_ok=True)
+    except OSError:
+        return False
+    if not os.path.isdir(folder):
+        return False
+    _custom_dir = folder
+    return True
+
+
+def output_dir():
+    folder = _custom_dir or default_output_dir()
     os.makedirs(folder, exist_ok=True)
     return folder
 
@@ -50,6 +73,28 @@ def unique_png(kind):
         path = os.path.join(folder, f"QuickShot-{kind}-{stamp}_{number}.png")
         number += 1
     return path
+
+
+def capture_stamp(kind):
+    folder = output_dir()
+    base = time.strftime("%Y%m%d-%H%M%S")
+    stamp = base
+    number = 2
+    while True:
+        single = os.path.join(folder, "QuickShot-%s-%s.png" % (kind, stamp))
+        series = os.path.join(folder, "QuickShot-%s-%s-001.png" % (kind, stamp))
+        if not os.path.exists(single) and not os.path.exists(series):
+            return stamp
+        stamp = "%s_%s" % (base, number)
+        number += 1
+
+
+def single_png(kind, stamp):
+    return os.path.join(output_dir(), "QuickShot-%s-%s.png" % (kind, stamp))
+
+
+def part_png(kind, stamp, index):
+    return os.path.join(output_dir(), "QuickShot-%s-%s-%03d.png" % (kind, stamp, int(index)))
 
 
 def save_full_screen():

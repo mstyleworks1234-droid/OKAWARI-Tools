@@ -142,6 +142,25 @@ const I18N = {
     cl2: "1.1.11以降：長いページを複数のPNGに分けて保存できます。",
     cl3: "1.1.8：文字認識、簡単な編集、撮影履歴、ショートカットを追加しました。",
     cl4: "1.0.1：範囲指定の撮影を公開しました。",
+    old_heading: "過去のバージョン",
+    old_note: "通常は最新版の使用をおすすめします。過去のバージョンは互換性確認や旧機能の利用などを目的として提供しています。",
+    old_built: "ファイルの日付",
+    old_published: "配布開始",
+    old_download: "このバージョンをダウンロード",
+    old_limits: "コード署名はありません。最新版より機能が少ないことや、後の版で直した不具合が残っていることがあります。",
+    compare_heading: "機能の比較",
+    compare_note: "「あり」は、その版のリリースノート、または同じバージョン番号の保全ソースに機能があることです。実機で常に成功することは意味しません。表にない版は、各バージョンの説明を見てください。",
+    compare_feature: "機能",
+    cmp_area: "範囲指定",
+    cmp_screen: "画面全体",
+    cmp_page: "ページ全体",
+    cmp_chat: "ChatGPT会話",
+    cmp_split: "長文の複数PNG",
+    cmp_ocr: "文字認識",
+    cmp_edit: "画像編集",
+    cmp_extension: "拡張機能",
+    cmp_yes: "あり",
+    cmp_no: "なし",
     q8: "拡張機能はどこから入手しますか？",
     a8: "Chromeウェブストアにはありません。EXEを起動したあと、アプリがパソコン内に置いた extension フォルダを開発者モードで読み込みます。同じファイルのZIPもGitHub Releasesにあります。",
     terms_p1: "QuickShotは無料で利用できます。会員登録は不要です。",
@@ -288,6 +307,25 @@ const I18N = {
     cl2: "1.1.11 and later: a long page can be saved as several PNG files.",
     cl3: "1.1.8: text recognition, a simple editor, capture history, and shortcuts were added.",
     cl4: "1.0.1: area capture was published.",
+    old_heading: "Earlier versions",
+    old_note: "The latest version is recommended. Earlier versions are provided for compatibility checks and for using older behavior.",
+    old_built: "File date",
+    old_published: "Published",
+    old_download: "Download this version",
+    old_limits: "These builds are not code-signed. An older build can have fewer features, or bugs that a later version fixed.",
+    compare_heading: "Feature comparison",
+    compare_note: "Yes means the release note, or the preserved source with the same version number, contains the feature. It does not mean every capture succeeded on a real machine. For versions that are not columns here, read that version's description.",
+    compare_feature: "Feature",
+    cmp_area: "Selected area",
+    cmp_screen: "Full screen",
+    cmp_page: "Full web page",
+    cmp_chat: "ChatGPT conversation",
+    cmp_split: "Long capture as several PNGs",
+    cmp_ocr: "Text recognition",
+    cmp_edit: "Image editor",
+    cmp_extension: "Browser extension",
+    cmp_yes: "Yes",
+    cmp_no: "No",
     q8: "Where do I get the extension?",
     a8: "It is not on the Chrome Web Store. After you start the EXE, load the extension folder it places on the PC, using developer mode. The same files are also attached as a ZIP on GitHub Releases.",
     terms_p1: "QuickShot is free to use. No account is required.",
@@ -367,6 +405,61 @@ function applyRelease() {
   }
 }
 
+function renderHistory() {
+  const tool = (typeof CATALOG !== "undefined" && CATALOG.tools) ? CATALOG.tools[0] : null;
+  const list = document.getElementById("old-releases");
+  if (list && tool && tool.releases) {
+    list.textContent = "";
+    tool.releases.forEach((item) => {
+      const article = document.createElement("article");
+      article.className = "version-item";
+      const title = document.createElement("h3");
+      title.textContent = tool.name + " " + item.version;
+      const meta = document.createElement("p");
+      meta.className = "note";
+      meta.textContent = t("old_built") + " " + item.built + " / " + t("old_published") + " " + item.published;
+      const summary = document.createElement("p");
+      summary.textContent = lang === "en" ? item.summaryEn : item.summaryJa;
+      const limits = document.createElement("p");
+      limits.className = "note";
+      limits.textContent = t("old_limits");
+      const link = document.createElement("p");
+      const anchor = document.createElement("a");
+      anchor.href = item.href;
+      anchor.textContent = t("old_download") + " (" + formatBytes(item.bytes) + ")";
+      link.appendChild(anchor);
+      article.append(title, meta, summary, limits, link);
+      list.appendChild(article);
+    });
+  }
+  const table = document.getElementById("compare-table");
+  if (table && tool && tool.compare) {
+    table.textContent = "";
+    const head = document.createElement("tr");
+    const corner = document.createElement("th");
+    corner.textContent = t("compare_feature");
+    head.appendChild(corner);
+    tool.compare.columns.forEach((column) => {
+      const cell = document.createElement("th");
+      cell.textContent = column;
+      head.appendChild(cell);
+    });
+    table.appendChild(head);
+    tool.compare.rows.forEach((row) => {
+      const line = document.createElement("tr");
+      const name = document.createElement("th");
+      name.textContent = t("cmp_" + row.key);
+      line.appendChild(name);
+      row.cells.forEach((cell) => {
+        const value = document.createElement("td");
+        value.textContent = t(cell === "yes" ? "cmp_yes" : "cmp_no");
+        line.appendChild(value);
+      });
+      table.appendChild(line);
+    });
+  }
+}
+
 function applyI18n() {
   document.documentElement.lang = lang;
   document.querySelectorAll("[data-i18n]").forEach((element) => {
@@ -384,6 +477,7 @@ function applyI18n() {
     toggle.setAttribute("aria-label", lang === "ja" ? "English" : "日本語");
   }
   applyRelease();
+  renderHistory();
 }
 
 const toggle = document.getElementById("lang-toggle");

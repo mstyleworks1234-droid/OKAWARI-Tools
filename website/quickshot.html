@@ -73,6 +73,33 @@
       </dl>
     </section>
     <section class="section">
+      <h2 data-i18n="compare_heading">機能の比較</h2>
+      <p data-i18n="compare_note">「あり」は、その版のリリースノート、または同じバージョン番号の保全ソースに機能があることです。実機で常に成功することは意味しません。表にない版は、各バージョンの説明を見てください。</p>
+      <div class="compare-wrap">
+        <table class="compare" id="compare-table">
+          <tr>
+            <th>機能</th><th>1.0.1</th><th>1.1.0</th><th>1.1.8</th><th>1.1.10</th><th>1.1.12</th><th>1.1.16</th>
+          </tr>
+          <tr><th>範囲指定</th><td>あり</td><td>あり</td><td>あり</td><td>あり</td><td>あり</td><td>あり</td></tr>
+          <tr><th>画面全体</th><td>なし</td><td>あり</td><td>あり</td><td>あり</td><td>あり</td><td>あり</td></tr>
+          <tr><th>ページ全体</th><td>なし</td><td>あり</td><td>あり</td><td>あり</td><td>あり</td><td>あり</td></tr>
+          <tr><th>ChatGPT会話</th><td>なし</td><td>なし</td><td>なし</td><td>あり</td><td>あり</td><td>あり</td></tr>
+          <tr><th>長文の複数PNG</th><td>なし</td><td>なし</td><td>なし</td><td>なし</td><td>あり</td><td>あり</td></tr>
+          <tr><th>文字認識</th><td>なし</td><td>なし</td><td>あり</td><td>あり</td><td>あり</td><td>あり</td></tr>
+          <tr><th>画像編集</th><td>なし</td><td>なし</td><td>あり</td><td>あり</td><td>あり</td><td>あり</td></tr>
+          <tr><th>拡張機能</th><td>なし</td><td>なし</td><td>あり</td><td>あり</td><td>あり</td><td>あり</td></tr>
+        </table>
+      </div>
+    </section>
+    <section class="section">
+      <h2 data-i18n="old_heading">過去のバージョン</h2>
+      <p data-i18n="old_note">通常は最新版の使用をおすすめします。過去のバージョンは互換性確認や旧機能の利用などを目的として提供しています。</p>
+      <details>
+        <summary data-i18n="old_heading">過去のバージョン</summary>
+        <div id="old-releases" class="version-list"></div>
+      </details>
+    </section>
+    <section class="section">
       <h2 data-i18n="features_heading">主な特徴</h2>
       <ul class="feature-list">
         <li data-i18n="f1">範囲指定、画面全体、ページ全体を撮影できます。</li>

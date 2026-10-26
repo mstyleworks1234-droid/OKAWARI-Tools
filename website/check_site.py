@@ -14,6 +14,24 @@ def fail(errors, message):
     errors.append(message)
 
 
+def release_objects(text):
+    _, _, tail = text.partition("releases: [")
+    found = []
+    for part in tail.split("\n        {")[1:]:
+        def grab(name):
+            match = re.search(r'%s:\s*"([^"]*)"' % name, part)
+            return match.group(1) if match else ""
+        size = re.search(r"bytes:\s*(\d+)", part)
+        found.append({
+            "version": grab("version"),
+            "fileName": grab("fileName"),
+            "bytes": int(size.group(1)) if size else 0,
+            "sha256": grab("sha256").upper(),
+            "href": grab("href"),
+        })
+    return found
+
+
 def catalog():
     text = open(os.path.join(ROOT, "catalog.js"), encoding="utf-8").read()
     def field(name):
@@ -60,6 +78,21 @@ def main():
             fail(errors, "sha256 file does not match the EXE")
     if info["fileName"] not in info["href"] or "github.com/" not in info["href"]:
         fail(errors, "download URL is not a GitHub release asset")
+    seen = set()
+    for item in release_objects(open(os.path.join(ROOT, "catalog.js"), encoding="utf-8").read()):
+        if not item["version"] or item["version"] in seen or item["version"] == info["version"]:
+            fail(errors, "bad or duplicate old version " + item["version"])
+        seen.add(item["version"])
+        if item["fileName"] not in item["href"] or ("/quickshot-" + item["version"] + "/") not in item["href"]:
+            fail(errors, "old download URL does not match " + item["version"])
+        path = os.path.join(REPO, "releases", item["fileName"])
+        if not os.path.isfile(path):
+            fail(errors, "missing old EXE " + item["fileName"])
+            continue
+        data = open(path, "rb").read()
+        digest = hashlib.sha256(data).hexdigest().upper()
+        if len(data) != item["bytes"] or digest != item["sha256"] or not data.startswith(b"MZ"):
+            fail(errors, "old EXE does not match catalog " + item["version"])
     quickshot = open(os.path.join(ROOT, "quickshot.html"), encoding="utf-8").read()
     if info["version"] not in quickshot:
         fail(errors, "quickshot.html does not show the catalog version")

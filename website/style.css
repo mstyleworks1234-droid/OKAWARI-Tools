@@ -163,8 +163,16 @@ a.btn.disabled {
 
 details { border-top: 1px solid var(--line); padding: 12px 0; }
 details:last-child { border-bottom: 1px solid var(--line); }
-summary { cursor: pointer; font-weight: 600; }
+summary { cursor: pointer; font-weight: 600; min-height: 44px; display: flex; align-items: center; }
 details p { margin: 8px 0 0; }
+
+.version-list { display: grid; gap: 12px; margin-top: 12px; }
+.version-item { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.version-item h3 { margin: 0 0 4px; font-size: 18px; }
+.compare-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.compare { width: 100%; border-collapse: collapse; font-size: 14px; }
+.compare th, .compare td { border-bottom: 1px solid var(--line); padding: 8px; text-align: left; white-space: nowrap; }
+.compare th { background: var(--surface); }
 
 .site-footer {
   border-top: 1px solid var(--line);

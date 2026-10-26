@@ -12,3 +12,4 @@ ImagePort/backups/
 *.exe
 
 backups/
+ops/site_metrics/data/

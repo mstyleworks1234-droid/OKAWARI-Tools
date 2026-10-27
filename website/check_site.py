@@ -7,7 +7,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(ROOT)
-PAGES = ["index.html", "quickshot.html", "about.html", "privacy.html", "terms.html"]
+PAGES = ["index.html", "quickshot.html", "about.html", "profile.html", "privacy.html", "terms.html"]
 
 
 def fail(errors, message):

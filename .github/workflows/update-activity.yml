@@ -1,0 +1,40 @@
+name: Update activity
+
+# Runs once a day. A push from this workflow does not start it again.
+# It may change only website/activity.json and website/profile.html.
+on:
+  schedule:
+    - cron: "0 22 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-activity
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch note and YouTube
+        run: python3 ops/activity/update_activity.py
+
+      - name: Commit activity data when it changes
+        run: |
+          git diff --quiet -- website/activity.json website/profile.html && exit 0
+          git add -- website/activity.json website/profile.html
+          git diff --cached --quiet && exit 0
+          extra=$(git diff --cached --name-only | grep -vxE 'website/activity.json|website/profile.html' || true)
+          if [ -n "$extra" ]; then
+            echo "Refusing to commit unexpected files:"
+            printf '%s\n' "$extra"
+            exit 1
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update the profile with the latest note articles and YouTube videos."
+          git push
